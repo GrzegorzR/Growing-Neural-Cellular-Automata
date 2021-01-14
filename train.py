@@ -13,7 +13,7 @@ from IPython.display import clear_output
 from lib.CAModel import CAModel
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(path='data/kacz4040.png'):
+def load_emoji(path='data/kacz80.png'):
     im = Image.open(path)
     im = np.array(im, dtype=float)
     im /= 255.0
@@ -42,11 +42,12 @@ def plot_loss(loss_log):
 
 def training():
     device = torch.device("cuda:0")
-    model_path = "models/remaster_1.pth"
+    #device = torch.device("cpu")
+    model_path = "models/remaster_2.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
-    TARGET_SIZE = 40
+    TARGET_SIZE = 80
 
     lr = 2e-3
     lr_gamma = 0.9999
@@ -58,7 +59,7 @@ def training():
     CELL_FIRE_RATE = 0.5
 
 
-    EXPERIMENT_TYPE = "Growing"
+    EXPERIMENT_TYPE = "Regenerating"
     EXPERIMENT_MAP = {"Growing": 0, "Persistent": 1, "Regenerating": 2}
     EXPERIMENT_N = EXPERIMENT_MAP[EXPERIMENT_TYPE]
 
@@ -124,7 +125,7 @@ def training():
         loss_log.append(loss.item())
 
         if step_i % 100 == 0:
-            clear_output()
+            #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
             #plot_loss(loss_log)
