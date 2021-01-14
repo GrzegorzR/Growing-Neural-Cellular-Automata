@@ -47,7 +47,7 @@ def training():
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
-    TARGET_SIZE = 80
+    TARGET_SIZE = 40
 
     lr = 2e-3
     lr_gamma = 0.9999
