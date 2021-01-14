@@ -1,6 +1,6 @@
 import time
 import imageio
-
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -13,11 +13,11 @@ from IPython.display import clear_output
 from lib.CAModel import CAModel
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(index, path="data/emoji.png"):
-    im = imageio.imread(path)
-    emoji = np.array(im[:, index*40:(index+1)*40].astype(np.float32))
-    emoji /= 255.0
-    return emoji
+def load_emoji(path='data/kacz4040.png'):
+    im = Image.open(path)
+    im = np.array(im, dtype=float)
+    im /= 255.0
+    return im
 
 def visualize_batch(x0, x):
     vis0 = to_rgb(x0)
@@ -40,8 +40,8 @@ def plot_loss(loss_log):
     plt.plot(np.log10(loss_log), '.', alpha=0.1)
     plt.show()
 
-def train():
-    device = torch.device("cpu")
+def training():
+    device = torch.device("cuda:0")
     model_path = "models/remaster_1.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
@@ -51,25 +51,24 @@ def train():
     lr = 2e-3
     lr_gamma = 0.9999
     betas = (0.5, 0.5)
-    n_epoch = 80000
+    n_epoch = 8000
 
     BATCH_SIZE = 8
     POOL_SIZE = 1024
     CELL_FIRE_RATE = 0.5
 
-    TARGET_EMOJI = 0
 
-    EXPERIMENT_TYPE = "Regenerating"
+    EXPERIMENT_TYPE = "Growing"
     EXPERIMENT_MAP = {"Growing": 0, "Persistent": 1, "Regenerating": 2}
     EXPERIMENT_N = EXPERIMENT_MAP[EXPERIMENT_TYPE]
 
     USE_PATTERN_POOL = [0, 1, 1][EXPERIMENT_N]
     DAMAGE_N = [0, 0, 3][EXPERIMENT_N]  # Number of patterns to damage in a batch
 
-    target_img = load_emoji(TARGET_EMOJI)
-    plt.figure(figsize=(4, 4))
-    plt.imshow(to_rgb(target_img))
-    plt.show()
+    target_img = load_emoji()
+    #plt.figure(figsize=(4, 4))
+    #plt.imshow(to_rgb(target_img))
+    #plt.show()
 
     p = TARGET_PADDING
     pad_target = np.pad(target_img, [(p, p), (p, p), (0, 0)])
@@ -82,7 +81,7 @@ def train():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel(CHANNEL_N, CELL_FIRE_RATE, device).to(device)
-    ca.load_state_dict(torch.load(model_path))
+    #ca.load_state_dict(torch.load(model_path))
 
     optimizer = optim.Adam(ca.parameters(), lr=lr, betas=betas)
     scheduler = optim.lr_scheduler.ExponentialLR(optimizer, lr_gamma)
@@ -101,6 +100,7 @@ def train():
         return torch.mean(torch.pow(x[..., :4] - target, 2), [-2, -3, -1])
 
     for i in range(n_epoch + 1):
+        print(i)
         if USE_PATTERN_POOL:
             batch = pool.sample(BATCH_SIZE)
             x0 = torch.from_numpy(batch.x.astype(np.float32)).to(device)
@@ -126,10 +126,10 @@ def train():
         if step_i % 100 == 0:
             clear_output()
             print(step_i, "loss =", loss.item())
-            visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
-            plot_loss(loss_log)
+            #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
+            #plot_loss(loss_log)
             torch.save(ca.state_dict(), model_path)
 
 if __name__ == '__main__':
-    img = load_emoji(0)
-    train()
+    img = load_emoji()
+    training()
