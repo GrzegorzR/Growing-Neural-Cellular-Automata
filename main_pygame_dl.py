@@ -1,18 +1,19 @@
 import pygame
 import torch
 import numpy as np
+from PIL import Image
 
 from lib.displayer import displayer
 from lib.utils import mat_distance
 from lib.CAModel import CAModel
 from lib.utils_vis import to_rgb, make_seed
 
-eraser_radius = 3
+eraser_radius = 10
 pix_size = 8
 _map_shape = (72,72)
 CHANNEL_N = 16
 CELL_FIRE_RATE = 0.5
-model_path = "models/remaster_1.pth"
+model_path = "models/growing.pth"
 device = torch.device("cpu")
 
 _rows = np.arange(_map_shape[0]).repeat(_map_shape[1]).reshape([_map_shape[0],_map_shape[1]])
@@ -29,6 +30,7 @@ disp = displayer(_map_shape, pix_size)
 
 isMouseDown = False
 running = True
+c = 0
 while running:
 
     for event in pygame.event.get():
@@ -47,6 +49,9 @@ while running:
         try:
             mouse_pos = np.array([int(event.pos[1]/pix_size), int(event.pos[0]/pix_size)])
             should_keep = (mat_distance(_map_pos, mouse_pos)>eraser_radius).reshape([_map_shape[0],_map_shape[1],1])
+            arr = output.detach().numpy() * should_keep
+            arr = np.pad(arr, (10, 10), 'linear_ramp',
+                 end_values=(0, 0))
             output = torch.from_numpy(output.detach().numpy()*should_keep)
         except AttributeError:
             pass
@@ -54,4 +59,7 @@ while running:
     output = model(output, 1)
 
     _map = to_rgb(output.detach().numpy()[0])
+    im = Image.fromarray((_map*255).astype(np.uint8))
+    im.save('out/grow_small/{}.png'.format(str(c).zfill(5)))
+    c += 1
     disp.update(_map)
