@@ -76,15 +76,16 @@ def training():
     h, w = pad_target.shape[:2]
     pad_target = np.expand_dims(pad_target, axis=0)
     pad_target = np.repeat(pad_target, BATCH_SIZE, axis=0)
-    pad_target = torch.from_numpy(pad_target.astype(np.float32))
+    pad_target = torch.from_numpy(pad_target.astype(np.float32)).to(device)
 
     seed = make_seed((h, w), CHANNEL_N)
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE,device )
+    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
     ca.conv1.weight.requires_grad = False
     ca.conv2.weight.requires_grad = False
+    ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 
     optimizer = optim.Adam(ca.parameters(), lr=lr, betas=betas)
@@ -117,7 +118,7 @@ def training():
         else:
             x0 = np.repeat(seed[None, ...], BATCH_SIZE, 0)
         x0 = torch.from_numpy(x0.astype(np.float32)).to(device)
-        x, loss = train(x0, pad_target, np.random.randint(12, 48), optimizer, scheduler)
+        x, loss = train(x0, pad_target, np.random.randint(60, 90), optimizer, scheduler)
 
         if USE_PATTERN_POOL:
             batch.x[:] = x.detach().cpu().numpy()

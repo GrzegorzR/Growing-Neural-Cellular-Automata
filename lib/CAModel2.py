@@ -9,6 +9,7 @@ class CAModel2(nn.Module):
         super(CAModel2, self).__init__()
         self.device = device
         self.channel_n = channel_n
+        self.device = device
 
         #conv_weights = torch.from_numpy(weight.astype(np.float32)).to(self.device)
         #conv_weights = conv_weights.view(1, 1, 3, 3).repeat(self.channel_n, 1, 1, 1)
