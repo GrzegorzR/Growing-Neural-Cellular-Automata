@@ -49,7 +49,7 @@ def training():
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
 
-    lr = 0.00001
+    lr = 2e-3
     lr_gamma = 0.9999
     betas = (0.5, 0.5)
     n_epoch = 8000
@@ -124,7 +124,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 100 == 0:
+        if step_i % 10 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
