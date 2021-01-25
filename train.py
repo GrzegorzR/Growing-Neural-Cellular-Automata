@@ -83,6 +83,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device).to(device)
+    ca.conv1.weight.requires_grad = False
+    ca.conv2.weight.requires_grad = False
     #ca.load_state_dict(torch.load(model_path))
 
     optimizer = optim.Adam(ca.parameters(), lr=lr, betas=betas)
@@ -115,7 +117,7 @@ def training():
         else:
             x0 = np.repeat(seed[None, ...], BATCH_SIZE, 0)
         x0 = torch.from_numpy(x0.astype(np.float32)).to(device)
-        x, loss = train(x0, pad_target, np.random.randint(12, 48), optimizer, scheduler)
+        x, loss = train(x0, pad_target, np.random.randint(60, 90), optimizer, scheduler)
 
         if USE_PATTERN_POOL:
             batch.x[:] = x.detach().cpu().numpy()
@@ -124,7 +126,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 10 == 0:
+        if step_i % 2 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
