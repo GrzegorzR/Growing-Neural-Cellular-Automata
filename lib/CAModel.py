@@ -47,6 +47,7 @@ class CAModel(nn.Module):
 
         dx = self.perceive(x, angle)
         dx = dx.transpose(1,3)
+        print(dx.shape)
         dx = self.fc0(dx)
         dx = F.relu(dx)
         dx = self.fc1(dx)

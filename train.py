@@ -42,19 +42,19 @@ def plot_loss(loss_log):
     plt.show()
 
 def training():
-    device = torch.device("cuda:0")
-    #device = torch.device("cpu")
+    #device = torch.device("cuda:0")
+    device = torch.device("cpu")
     model_path = "models/remaster_3.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
 
-    lr = 2e-3
+    lr = 0.00001
     lr_gamma = 0.9999
     betas = (0.5, 0.5)
     n_epoch = 8000
 
-    BATCH_SIZE = 8
+    BATCH_SIZE = 2
     POOL_SIZE = 128
     CELL_FIRE_RATE = 0.5
 
@@ -83,8 +83,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    ca.conv_w_x.requires_grad = False
-    ca.conv_w_y.requires_grad = False
+    #ca.conv_w_x.requires_grad = False
+    #ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 

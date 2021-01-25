@@ -49,8 +49,8 @@ class CAModel2(nn.Module):
         #print(self.conv1.weight)
         #print(dx.shape)
         #dx = F.relu(dx)
-        dx = torch.reshape(dx, (x.shape[2]*x.shape[2]*x.shape[0], 48))
-
+        #dx = torch.reshape(dx, (x.shape[2]*x.shape[2]*x.shape[0], 48))
+        dx = dx.transpose(1, 3)
         dx = self.fc0(dx)
         dx = F.relu(dx)
         dx = self.fc1(dx)
