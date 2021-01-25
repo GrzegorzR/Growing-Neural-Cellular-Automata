@@ -83,8 +83,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    ca.conv1.weight.requires_grad = False
-    ca.conv2.weight.requires_grad = False
+    ca.conv_w_x.requires_grad = False
+    ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 

@@ -11,18 +11,16 @@ class CAModel2(nn.Module):
         self.channel_n = channel_n
         self.device = device
 
-        #conv_weights = torch.from_numpy(weight.astype(np.float32)).to(self.device)
-        #conv_weights = conv_weights.view(1, 1, 3, 3).repeat(self.channel_n, 1, 1, 1)
+
         dx = np.outer([1, 2, 1], [-1, 0, 1]) / 8.0  # Sobel filter
         dy = dx.T
-        self.conv1 = nn.Conv2d(16, 16, kernel_size=3, padding=1, groups=self.channel_n)
-        self.conv2 =nn.Conv2d(16, 16, kernel_size=3, padding=1, groups=self.channel_n)
 
-        self.conv1.weight = nn.Parameter(torch.from_numpy(dx.astype(np.float32)).view(1,1,3,3).repeat(self.channel_n, 1, 1, 1))
-        self.conv2.weight = nn.Parameter(torch.from_numpy(dy.astype(np.float32)).view(1,1,3,3).repeat(self.channel_n, 1, 1, 1))
+        conv_w_x = torch.from_numpy(dx.astype(np.float32)).to(self.device)
+        self.conv_w_x = conv_w_x.view(1, 1, 3, 3).repeat(self.channel_n, 1, 1, 1)
 
-        #self.conv = nn.Conv2d(16, hidden_chanels, kernel_size=(3,3), padding=1)
-        #print(self.conv.weight.shape)
+        conv_w_y = torch.from_numpy(dy.astype(np.float32)).to(self.device)
+        self.conv_w_y = conv_w_y.view(1, 1, 3, 3).repeat(self.channel_n, 1, 1, 1)
+
         self.drop = nn.Dropout(0.5)
         self.fc0 = nn.Linear(48, hidden_size)
         self.fc1 = nn.Linear(hidden_size, channel_n, bias=True)
@@ -33,8 +31,9 @@ class CAModel2(nn.Module):
         self.to(self.device)
 
     def perceive(self, x):
-        y1 = self.conv1(x)
-        y2 = self.conv2(x)
+        y1 = F.conv2d(x, self.conv_w_x, padding=1, groups=self.channel_n)
+        y2 = F.conv2d(x, self.conv_w_y, padding=1, groups=self.channel_n)
+
         y = torch.cat((x,y1,y2),1)
         return y
 
@@ -79,5 +78,6 @@ class CAModel2(nn.Module):
 if __name__ == '__main__':
     ca_m = CAModel2(16, 0.2,'cpu')
     ca_m.eval()
+    print(len(list(ca_m.parameters())))
     arr = np.random.random((8, 112, 112, 16))
     output = ca_m(torch.from_numpy(arr.astype(np.float32)), 1)
