@@ -82,7 +82,7 @@ def training():
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE).to(device)
+    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device).to(device)
     #ca.load_state_dict(torch.load(model_path))
 
     optimizer = optim.Adam(ca.parameters(), lr=lr, betas=betas)

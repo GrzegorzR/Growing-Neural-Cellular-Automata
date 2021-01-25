@@ -5,9 +5,9 @@ import torch
 import numpy as np
 
 class CAModel2(nn.Module):
-    def __init__(self, channel_n, fire_rate,  hidden_size=128):
+    def __init__(self, channel_n, fire_rate, device, hidden_size=128):
         super(CAModel2, self).__init__()
-
+        self.device = device
         self.channel_n = channel_n
 
         #conv_weights = torch.from_numpy(weight.astype(np.float32)).to(self.device)
