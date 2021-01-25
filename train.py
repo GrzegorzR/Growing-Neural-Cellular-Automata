@@ -11,6 +11,7 @@ import torch.nn.functional as F
 from IPython.display import clear_output
 
 from lib.CAModel import CAModel
+from lib.CAModel2 import CAModel2
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
 def load_emoji(path='data/kacz80.png'):
@@ -41,13 +42,12 @@ def plot_loss(loss_log):
     plt.show()
 
 def training():
-    device = torch.device("cuda:0")
-    #device = torch.device("cpu")
-    model_path = "models/remaster_2.pth"
+    #device = torch.device("cuda:0")
+    device = torch.device("cpu")
+    model_path = "models/remaster_3.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
-    TARGET_SIZE = 40
 
     lr = 2e-3
     lr_gamma = 0.9999
@@ -55,11 +55,11 @@ def training():
     n_epoch = 8000
 
     BATCH_SIZE = 8
-    POOL_SIZE = 1024
+    POOL_SIZE = 128
     CELL_FIRE_RATE = 0.5
 
 
-    EXPERIMENT_TYPE = "Regenerating"
+    EXPERIMENT_TYPE = "Growing"
     EXPERIMENT_MAP = {"Growing": 0, "Persistent": 1, "Regenerating": 2}
     EXPERIMENT_N = EXPERIMENT_MAP[EXPERIMENT_TYPE]
 
@@ -75,13 +75,14 @@ def training():
     pad_target = np.pad(target_img, [(p, p), (p, p), (0, 0)])
     h, w = pad_target.shape[:2]
     pad_target = np.expand_dims(pad_target, axis=0)
+    pad_target = np.repeat(pad_target, BATCH_SIZE, axis=0)
     pad_target = torch.from_numpy(pad_target.astype(np.float32)).to(device)
 
     seed = make_seed((h, w), CHANNEL_N)
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel(CHANNEL_N, CELL_FIRE_RATE, device).to(device)
+    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device).to(device)
     #ca.load_state_dict(torch.load(model_path))
 
     optimizer = optim.Adam(ca.parameters(), lr=lr, betas=betas)
@@ -101,7 +102,7 @@ def training():
         return torch.mean(torch.pow(x[..., :4] - target, 2), [-2, -3, -1])
 
     for i in range(n_epoch + 1):
-        print(i)
+        #print(i)
         if USE_PATTERN_POOL:
             batch = pool.sample(BATCH_SIZE)
             x0 = torch.from_numpy(batch.x.astype(np.float32)).to(device)
@@ -114,8 +115,7 @@ def training():
         else:
             x0 = np.repeat(seed[None, ...], BATCH_SIZE, 0)
         x0 = torch.from_numpy(x0.astype(np.float32)).to(device)
-
-        x, loss = train(x0, pad_target, np.random.randint(64, 96), optimizer, scheduler)
+        x, loss = train(x0, pad_target, np.random.randint(12, 48), optimizer, scheduler)
 
         if USE_PATTERN_POOL:
             batch.x[:] = x.detach().cpu().numpy()
@@ -124,7 +124,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 100 == 0:
+        if step_i % 10 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())

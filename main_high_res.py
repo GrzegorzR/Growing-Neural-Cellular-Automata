@@ -31,8 +31,8 @@ def generate_animation(input_dir, out_file):
 
 
 if __name__ == '__main__':
-    input_dir = 'out/grow_small'
-    out_dir = 'out/grow_big_3'
-    generate_high_res(input_dir, out_dir)
-
+    #input_dir = 'out/grow_small'
+    #out_dir = 'out/grow_big_3'
+    #generate_high_res(input_dir, out_dir)
+    get_mask()
 
