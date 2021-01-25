@@ -43,6 +43,7 @@ def make_seeds(shape, n_channels, n=1):
     return x
 
 def make_seed(shape, n_channels):
+    print(shape[0]//2, shape[1]//2)
     seed = np.zeros([shape[0], shape[1], n_channels], np.float32)
     seed[shape[0]//2, shape[1]//2, 3:] = 1.0
     return seed
