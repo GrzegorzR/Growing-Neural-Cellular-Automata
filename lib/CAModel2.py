@@ -60,15 +60,14 @@ class CAModel2(nn.Module):
         stochastic = torch.rand([dx.size(0),dx.size(1),dx.size(2),1])>fire_rate
         stochastic = stochastic.float().to(self.device)
         dx = dx * stochastic
+
         x = x+dx.transpose(1,3)
 
         post_life_mask = self.alive(x)
 
         life_mask = (pre_life_mask & post_life_mask).float()
         x = x * life_mask.float()
-
-
-        return x.transpose(1,3)
+        return x.transpose(1, 3)
 
     def forward(self, x, steps=1, fire_rate=None, angle=0.0):
         for step in range(steps):

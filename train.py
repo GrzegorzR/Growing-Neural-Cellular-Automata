@@ -74,7 +74,7 @@ def training():
     pad_target = np.pad(target_img, [(p, p), (p, p), (0, 0)])
     h, w = pad_target.shape[:2]
     pad_target = np.expand_dims(pad_target, axis=0)
-    pad_target = np.repeat(pad_target, BATCH_SIZE, axis=0)
+    #pad_target = np.repeat(pad_target, BATCH_SIZE, axis=0)
     pad_target = torch.from_numpy(pad_target.astype(np.float32)).to(device)
 
     seed = make_seed((h, w), CHANNEL_N)
@@ -82,8 +82,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    ca.conv_w_x.requires_grad = False
-    ca.conv_w_y.requires_grad = False
+    #ca.conv_w_x.requires_grad = False
+    #ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 

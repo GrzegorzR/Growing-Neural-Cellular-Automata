@@ -87,4 +87,4 @@ def run_sim(model_path, save_dir=None, mask_path=None):
         c += 1
         disp.update(map)
 if __name__ == '__main__':
-    run_sim('models/remaster_3.pth', mask_path='data/pol.jpg', save_dir='out/grow_pol_2')
+    run_sim('models/remaster_3.pth', mask_path='data/pol.jpg', save_dir=None)
