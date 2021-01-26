@@ -82,7 +82,7 @@ def training():
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel(CHANNEL_N, CELL_FIRE_RATE, device)
+    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
     #ca.conv_w_x.requires_grad = False
     #ca.conv_w_y.requires_grad = False
     ca.to(device)

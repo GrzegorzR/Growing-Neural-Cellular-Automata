@@ -24,6 +24,8 @@ class CAModel2(nn.Module):
         self.drop = nn.Dropout(0.5)
         self.fc0 = nn.Linear(48, hidden_size)
         self.fc1 = nn.Linear(hidden_size, channel_n, bias=False)
+        with torch.no_grad():
+            self.fc1.weight.zero_()
 
 
         self.fire_rate = fire_rate
