@@ -43,8 +43,8 @@ def plot_loss(loss_log):
     plt.show()
 
 def training():
-    #device = torch.device("cuda:0")
-    device = torch.device("cpu")
+    device = torch.device("cuda:0")
+    #device = torch.device("cpu")
     model_path = "models/remaster_3.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
