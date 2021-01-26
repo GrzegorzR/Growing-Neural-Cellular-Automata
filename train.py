@@ -83,8 +83,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    #ca.conv_w_x.requires_grad = False
-    #ca.conv_w_y.requires_grad = False
+    ca.conv_w_x.requires_grad = False
+    ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 
@@ -127,7 +127,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 10 == 0:
+        if step_i % 100 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
