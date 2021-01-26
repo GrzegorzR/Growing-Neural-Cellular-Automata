@@ -80,7 +80,7 @@ def run_sim(model_path, save_dir=None, mask_path=None):
 
         output = model(output)
 
-        map = to_rgb(output.detach().numpy()[0])*mask
+        map = to_rgb(output.detach().numpy()[0])
         if save_dir:
             im = Image.fromarray((map*255).astype(np.uint8))
             im.save(os.path.join(save_dir, '{}.png'.format(str(c).zfill(5))))

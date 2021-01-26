@@ -14,7 +14,7 @@ from lib.CAModel import CAModel
 from lib.CAModel2 import CAModel2
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(path='data/kacz80.png'):
+def load_emoji(path='data/4040.png'):
     im = Image.open(path)
     im = np.array(im, dtype=float)
     im /= 255.0
@@ -53,7 +53,7 @@ def training():
     betas = (0.5, 0.5)
     n_epoch = 80000
 
-    BATCH_SIZE = 4
+    BATCH_SIZE = 8
     POOL_SIZE = 1024
     CELL_FIRE_RATE = 0.5
 
@@ -81,9 +81,9 @@ def training():
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel(CHANNEL_N, CELL_FIRE_RATE, device)
-    #ca.conv_w_x.requires_grad = False
-    #ca.conv_w_y.requires_grad = False
+    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
+    ca.conv_w_x.requires_grad = False
+    ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 
