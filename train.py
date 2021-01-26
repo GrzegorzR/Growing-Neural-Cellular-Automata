@@ -48,14 +48,13 @@ def training():
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
-
-    lr = 0.0001
+    lr = 2e-3
     lr_gamma = 0.9999
     betas = (0.5, 0.5)
-    n_epoch = 8000
+    n_epoch = 80000
 
-    BATCH_SIZE = 4
-    POOL_SIZE = 128
+    BATCH_SIZE = 8
+    POOL_SIZE = 1024
     CELL_FIRE_RATE = 0.5
 
 
@@ -83,8 +82,8 @@ def training():
     batch = pool.sample(BATCH_SIZE).x
 
     ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    #ca.conv_w_x.requires_grad = False
-    #ca.conv_w_y.requires_grad = False
+    ca.conv_w_x.requires_grad = False
+    ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 
