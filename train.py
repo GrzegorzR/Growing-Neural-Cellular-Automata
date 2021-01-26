@@ -94,7 +94,7 @@ def training():
 
     def train(x, target, steps, optimizer, scheduler):
         x = ca(x, steps=steps)
-        loss = F.mse_loss(x[:, :, :, :4], target)
+        loss = F.mse_loss(x[:, :, :, :3], target)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
