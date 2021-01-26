@@ -47,7 +47,7 @@ class CAModel(nn.Module):
 
         dx = self.perceive(x, angle)
         dx = dx.transpose(1,3)
-        print(dx.shape)
+        #print(dx.shape)
         dx = self.fc0(dx)
         dx = F.relu(dx)
         dx = self.fc1(dx)
@@ -55,7 +55,7 @@ class CAModel(nn.Module):
         if fire_rate is None:
             fire_rate=self.fire_rate
         stochastic = torch.rand([dx.size(0),dx.size(1),dx.size(2),1])>fire_rate
-        stochastic = stochastic.float().to(self.device)
+        #stochastic = stochastic.float().to(self.device)
         dx = dx * stochastic
 
         x = x+dx.transpose(1,3)
@@ -69,3 +69,8 @@ class CAModel(nn.Module):
         for step in range(steps):
             x = self.update(x, fire_rate, angle)
         return x
+
+if __name__ == '__main__':
+    ca = CAModel(16, 0.2,'cpu')
+    for p in ca.parameters():
+        print(p.shape, p)
