@@ -102,7 +102,7 @@ def training():
         return x, loss
 
     def loss_f(x, target):
-        return torch.mean(torch.pow(x[..., :4] - target, 2), [-2, -3, -1])
+        return torch.mean(torch.pow(x[..., :3] - target, 2), [-2, -3, -1])
 
     for i in range(n_epoch + 1):
         #print(i)
