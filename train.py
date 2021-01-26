@@ -14,7 +14,7 @@ from lib.CAModel import CAModel
 from lib.CAModel2 import CAModel2
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(path='data/4040.png'):
+def load_emoji(path='data/tri.png'):
     im = Image.open(path)
     im = np.array(im, dtype=float)
     im /= 255.0
@@ -126,7 +126,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 100 == 0:
+        if step_i % 200 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
