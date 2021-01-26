@@ -16,7 +16,7 @@ from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_se
 
 def load_emoji(path='data/tri.png'):
     im = Image.open(path)
-    im = im.convert('RGB')
+    im = im.convert('RGBA')
     im = np.array(im, dtype=float)
     im /= 255.0
     return im
@@ -43,8 +43,8 @@ def plot_loss(loss_log):
     plt.show()
 
 def training():
-    device = torch.device("cuda:0")
-    #device = torch.device("cpu")
+    #device = torch.device("cuda:0")
+    device = torch.device("cpu")
     model_path = "models/remaster_3.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
@@ -94,7 +94,7 @@ def training():
 
     def train(x, target, steps, optimizer, scheduler):
         x = ca(x, steps=steps)
-        loss = F.mse_loss(x[:, :, :, :3], target)
+        loss = F.mse_loss(x[:, :, :, :4], target)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -102,7 +102,7 @@ def training():
         return x, loss
 
     def loss_f(x, target):
-        return torch.mean(torch.pow(x[..., :3] - target, 2), [-2, -3, -1])
+        return torch.mean(torch.pow(x[..., :4] - target, 2), [-2, -3, -1])
 
     for i in range(n_epoch + 1):
         #print(i)
