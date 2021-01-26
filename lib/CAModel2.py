@@ -29,28 +29,10 @@ class CAModel2(nn.Module):
         self.fire_rate = fire_rate
         self.to(self.device)
 
-    def perceive2(self, x):
+    def perceive(self, x):
         y1 = F.conv2d(x, self.conv_w_x, padding=1, groups=self.channel_n)
         y2 = F.conv2d(x, self.conv_w_y, padding=1, groups=self.channel_n)
 
-        y = torch.cat((x,y1,y2),1)
-        return y
-    def perceive(self, x, angle=0):
-
-        def _perceive_with(x, weight):
-            conv_weights = torch.from_numpy(weight.astype(np.float32)).to(self.device)
-            conv_weights = conv_weights.view(1,1,3,3).repeat(self.channel_n, 1, 1, 1)
-            return F.conv2d(x, conv_weights, padding=1, groups=self.channel_n)
-
-        dx = np.outer([1, 2, 1], [-1, 0, 1]) / 8.0  # Sobel filter
-        dy = dx.T
-        c = np.cos(angle*np.pi/180)
-        s = np.sin(angle*np.pi/180)
-        w1 = c*dx-s*dy
-        w2 = s*dx+c*dy
-
-        y1 = _perceive_with(x, w1)
-        y2 = _perceive_with(x, w2)
         y = torch.cat((x,y1,y2),1)
         return y
 
@@ -63,22 +45,19 @@ class CAModel2(nn.Module):
         pre_life_mask = self.alive(x)
 
         dx = self.perceive(x)
-        #print(self.conv1.weight)
-        #print(dx.shape)
-        #dx = F.relu(dx)
-        #dx = torch.reshape(dx, (x.shape[2]*x.shape[2]*x.shape[0], 48))
+
         dx = dx.transpose(1, 3)
         dx = self.fc0(dx)
         dx = F.relu(dx)
         dx = self.fc1(dx)
-        dx = self.drop(dx)
+        #dx = self.drop(dx)
         #dx = F.relu(dx)
-        #print(dx.shape)
-        dx = torch.reshape(dx, (x.shape[0],  self.channel_n, x.shape[2], x.shape[2]))
 
-        #print(x.shape)
-        #print(dx.shape)
-        x = x+dx
+
+        fire_rate=self.fire_rate
+        stochastic = torch.rand([dx.size(0),dx.size(1),dx.size(2),1])>fire_rate
+        dx = dx * stochastic
+        x = x+dx.transpose(1,3)
 
         post_life_mask = self.alive(x)
 
