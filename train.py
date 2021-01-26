@@ -16,7 +16,7 @@ from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_se
 
 def load_emoji(path='data/tri.png'):
     im = Image.open(path)
-    im = im.convert('RGB')
+    im = im.convert('RGBA')
     im = np.array(im, dtype=float)
     im /= 255.0
     return im
