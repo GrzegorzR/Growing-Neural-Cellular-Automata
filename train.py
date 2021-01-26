@@ -127,7 +127,7 @@ def training():
         step_i = len(loss_log)
         loss_log.append(loss.item())
 
-        if step_i % 200 == 0:
+        if step_i % 50 == 0:
             #clear_output()
             print(step_i, "loss =", loss.item())
             #visualize_batch(x0.detach().cpu().numpy(), x.detach().cpu().numpy())
