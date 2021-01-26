@@ -49,17 +49,17 @@ def training():
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
 
-    lr = 0.00001
+    lr = 0.0001
     lr_gamma = 0.9999
     betas = (0.5, 0.5)
     n_epoch = 8000
 
-    BATCH_SIZE = 2
+    BATCH_SIZE = 4
     POOL_SIZE = 128
     CELL_FIRE_RATE = 0.5
 
 
-    EXPERIMENT_TYPE = "Growing"
+    EXPERIMENT_TYPE = "Regenerating"
     EXPERIMENT_MAP = {"Growing": 0, "Persistent": 1, "Regenerating": 2}
     EXPERIMENT_N = EXPERIMENT_MAP[EXPERIMENT_TYPE]
 
@@ -82,9 +82,9 @@ def training():
     pool = SamplePool(x=np.repeat(seed[None, ...], POOL_SIZE, 0))
     batch = pool.sample(BATCH_SIZE).x
 
-    ca = CAModel2(CHANNEL_N, CELL_FIRE_RATE, device)
-    ca.conv_w_x.requires_grad = False
-    ca.conv_w_y.requires_grad = False
+    ca = CAModel(CHANNEL_N, CELL_FIRE_RATE, device)
+    #ca.conv_w_x.requires_grad = False
+    #ca.conv_w_y.requires_grad = False
     ca.to(device)
     #ca.load_state_dict(torch.load(model_path))
 
