@@ -14,7 +14,7 @@ from lib.CAModel import CAModel
 from lib.CAModel2 import CAModel2
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(path='data/tri.png'):
+def load_emoji(path='data/tri60.png'):
     im = Image.open(path)
     im = im.convert('RGBA')
     im = np.array(im, dtype=float)
@@ -45,7 +45,7 @@ def plot_loss(loss_log):
 def training():
     device = torch.device("cuda:0")
     #device = torch.device("cpu")
-    model_path = "models/remaster_3.pth"
+    model_path = "models/remaster_4.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
@@ -59,7 +59,7 @@ def training():
     CELL_FIRE_RATE = 0.5
 
 
-    EXPERIMENT_TYPE = "Regenerating"
+    EXPERIMENT_TYPE = "Growing"
     EXPERIMENT_MAP = {"Growing": 0, "Persistent": 1, "Regenerating": 2}
     EXPERIMENT_N = EXPERIMENT_MAP[EXPERIMENT_TYPE]
 
@@ -118,7 +118,7 @@ def training():
         else:
             x0 = np.repeat(seed[None, ...], BATCH_SIZE, 0)
         x0 = torch.from_numpy(x0.astype(np.float32)).to(device)
-        x, loss = train(x0, pad_target, np.random.randint(60, 90), optimizer, scheduler)
+        x, loss = train(x0, pad_target, np.random.randint(20, 50), optimizer, scheduler)
 
         if USE_PATTERN_POOL:
             batch.x[:] = x.detach().cpu().numpy()
