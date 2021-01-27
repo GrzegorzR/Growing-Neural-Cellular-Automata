@@ -118,7 +118,7 @@ def training():
         else:
             x0 = np.repeat(seed[None, ...], BATCH_SIZE, 0)
         x0 = torch.from_numpy(x0.astype(np.float32)).to(device)
-        x, loss = train(x0, pad_target, np.random.randint(20, 50), optimizer, scheduler)
+        x, loss = train(x0, pad_target, np.random.randint(50, 80), optimizer, scheduler)
 
         if USE_PATTERN_POOL:
             batch.x[:] = x.detach().cpu().numpy()
