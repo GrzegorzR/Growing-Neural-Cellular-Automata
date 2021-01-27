@@ -68,9 +68,10 @@ def run_sim(model_path, save_dir=None, mask_path=None):
             try:
                 mouse_pos = np.array([int(event.pos[1]/pix_size), int(event.pos[0]/pix_size)])
                 should_keep = (mat_distance(map_pos, mouse_pos)>eraser_radius).reshape([map_shape[0],map_shape[1],1])
-                arr = replicate_edges(arr,{1:2,2:2})
 
                 arr = output.detach().numpy() * should_keep #*mask
+                arr = replicate_edges(arr,{1:2,2:2})
+
 
                 output = torch.from_numpy(arr)
             except AttributeError:
@@ -87,4 +88,4 @@ def run_sim(model_path, save_dir=None, mask_path=None):
         c += 1
         disp.update(map)
 if __name__ == '__main__':
-    run_sim('models/remaster_4.pth', mask_path='data/pol.jpg', save_dir=None)
+    run_sim('models/remaster_5.pth', mask_path='data/pol.jpg', save_dir=None)

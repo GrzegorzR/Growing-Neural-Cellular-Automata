@@ -14,7 +14,7 @@ from lib.CAModel import CAModel
 from lib.CAModel2 import CAModel2
 from lib.utils_vis import SamplePool, to_alpha, to_rgb, get_living_mask, make_seed, make_circle_masks
 
-def load_emoji(path='data/tri60.png'):
+def load_emoji(path='data/tricolor80.png'):
     im = Image.open(path)
     im = im.convert('RGBA')
     im = np.array(im, dtype=float)
@@ -45,7 +45,7 @@ def plot_loss(loss_log):
 def training():
     device = torch.device("cuda:0")
     #device = torch.device("cpu")
-    model_path = "models/remaster_4.pth"
+    model_path = "models/remaster_5.pth"
 
     CHANNEL_N = 16  # Number of CA state channels
     TARGET_PADDING = 16  # Number of pixels used to pad the target image border
